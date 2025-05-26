@@ -1,0 +1,28 @@
+  db_gitea:
+    image: mariadb:11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: gitea
+      MYSQL_USER: gitea
+      MYSQL_PASSWORD: ${GITEA_DB_PASS}
+    volumes:
+      - gitea_db_data:/var/lib/mysql
+    networks:
+      - internal
+
+  gitea:
+    image: gitea/gitea:latest
+    restart: always
+    environment:
+      - DB_TYPE=mysql
+      - DB_HOST=db_gitea:3306
+      - DB_NAME=gitea
+      - DB_USER=gitea
+      - DB_PASSWD=${GITEA_DB_PASS}
+    volumes:
+      - gitea_data:/data
+    networks:
+      - internal
+    depends_on:
+      - db_gitea

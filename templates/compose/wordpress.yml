@@ -1,0 +1,27 @@
+  db_wp:
+    image: mariadb:11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: ${WP_DB_PASS}
+    volumes:
+      - wp_db_data:/var/lib/mysql
+    networks:
+      - internal
+
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db_wp:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASS}
+    volumes:
+      - wp_data:/var/www/html
+    networks:
+      - internal
+    depends_on:
+      - db_wp
